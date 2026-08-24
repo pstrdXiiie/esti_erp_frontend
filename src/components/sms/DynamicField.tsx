@@ -44,7 +44,7 @@ export function DynamicField<T extends FieldValues>({
             {spec.fieldtype === "Select" ? (
               <Select
                 onValueChange={field.onChange}
-                defaultValue={field.value}
+                value={(field.value as string | undefined) ?? ""}
                 disabled={spec.readOnly}
               >
                 <SelectTrigger className="w-full">
@@ -82,6 +82,7 @@ export function DynamicField<T extends FieldValues>({
                 }
                 readOnly={spec.readOnly}
                 {...field}
+                value={(field.value as string | number | undefined) ?? ""}
               />
             )}
           </FormControl>

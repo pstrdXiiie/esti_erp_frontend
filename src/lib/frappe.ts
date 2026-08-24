@@ -16,9 +16,6 @@ import axios, { type AxiosInstance } from "axios"
 const frappeClient: AxiosInstance = axios.create({
   baseURL: "/",
   withCredentials: true,
-  headers: {
-    "X-Frappe-CSRF-Token": "",
-  },
 })
 
 // Frappe issues a CSRF token on the logged-in session (frappe.csrf_token via
@@ -136,13 +133,17 @@ export const frappe = {
    * Backend Architecture (§4.3) lives behind campus_erp.api.<module>.<fn>,
    * never re-implemented client-side.
    */
-  async call<T = unknown>(
-    method: string,
-    args: Record<string, unknown> = {}
-  ): Promise<T> {
-    const { data } = await frappeClient.post(`/api/method/${method}`, args)
-    return data.message as T
-  },
+ async call<T = unknown>(
+  method: string,
+  args: Record<string, unknown> = {},
+  httpMethod: "get" | "post" = "post"
+): Promise<T> {
+  const { data } =
+    httpMethod === "get"
+      ? await frappeClient.get(`/api/method/${method}`, { params: args })
+      : await frappeClient.post(`/api/method/${method}`, args)
+  return data.message as T
+},
 
   async login(usr: string, pwd: string) {
     const { data } = await frappeClient.post("/api/method/login", { usr, pwd })
@@ -155,14 +156,14 @@ export const frappe = {
 
   /** campus_erp.api.auth.me() — roles + visible module list for the sidebar. */
   async me() {
-    return frappe.call<{
-      user: string
-      full_name: string
-      roles: string[]
-      modules: string[]
-      csrf_token: string
-    }>("campus_erp.api.auth.me")
-  },
+  return frappe.call<{
+    user: string
+    full_name: string
+    roles: string[]
+    modules: string[]
+    csrf_token: string
+  }>("campus_erp.api.auth.me", {}, "get")
+},
 }
 
 export default frappeClient

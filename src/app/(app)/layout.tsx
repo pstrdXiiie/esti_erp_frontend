@@ -1,12 +1,14 @@
 "use client"
 
-import { type ReactNode } from "react"
+import { useEffect, type ReactNode } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useAuth } from "@/providers/AuthProvider"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
+
+
 
 const NAV_ITEMS: Array<{ module: string; label: string; href: string }> = [
   { module: "Registrar", label: "Registrar", href: "/registrar" },
@@ -22,6 +24,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
 
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login")
+    }
+  }, [loading, user, router])
+
   if (loading) {
     return (
       <div className="flex flex-1 items-center justify-center">
@@ -31,7 +39,6 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   }
 
   if (!user) {
-    if (typeof window !== "undefined") router.replace("/login")
     return null
   }
 
@@ -71,7 +78,11 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           </Button>
         </div>
       </aside>
-      <main className="flex-1 p-6">{children}</main>
+      <main className="flex-1 p-6">
+        
+          {children}
+        
+      </main>
     </div>
   )
 }

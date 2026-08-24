@@ -104,12 +104,31 @@ export function EntryScreen({
   }
 
   return (
-    <div className="grid gap-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">{spec.title}</h1>
+    <div className=" rounded-lg border bg-card p-4 shadow-md">
+     <div className="flex items-center justify-between gap-4 bg-slate-900 p-3 text-white rounded">
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-xl font-semibold">
+              {name ? `Edit ${spec.title}` : `New ${spec.title}`}
+            </h1>
+
+            <p className="text-sm text-muted-foreground">
+              {name
+                ? `Editing ${name}`
+                : `Create a new ${spec.title.toLowerCase()} record`}
+            </p>
+          </div>
+
+          {name && <Badge variant="secondary">Editing</Badge>}
+        </div>
+
         {status && <Badge variant="outline">{status}</Badge>}
       </div>
-
+        
+        <div className="h-2"/>
+       <Separator/>
+       <div className="h-2"/>
+      
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit((values) => saveMutation.mutate(values))}
@@ -132,22 +151,41 @@ export function EntryScreen({
             </>
           )}
 
-          <div className="flex flex-wrap gap-2">
-            <Button type="submit" disabled={saveMutation.isPending}>
-              {saveMutation.isPending ? "Saving…" : "Save"}
-            </Button>
-            {name &&
-              spec.workflowActions?.map((action) => (
-                <Button
-                  key={action}
-                  type="button"
-                  variant="secondary"
-                  disabled={workflowMutation.isPending}
-                  onClick={() => workflowMutation.mutate(action)}
-                >
-                  {action}
-                </Button>
-              ))}
+         <div className="flex flex-wrap items-center justify-between gap-1">
+            <div className="flex flex-wrap gap-2">
+              <Button
+              className="hover:bg-emerald-500"
+                type="submit"
+                disabled={saveMutation.isPending}
+              >
+                {saveMutation.isPending ? "Saving…" : "Save"}
+              </Button>
+
+              {name &&
+                spec.workflowActions?.map((action) => (
+                  <Button
+                    key={action}
+                    type="button"
+                    variant="secondary"
+                    disabled={workflowMutation.isPending || saveMutation.isPending}
+                    onClick={() => workflowMutation.mutate(action)}
+                  >
+                    {action}
+                  </Button>
+                ))}
+            </div>
+
+            {basePath && (
+              <Button
+                className="items-center hover:bg-red-100 hover:text-red-500"
+                type="button"
+                variant="outline"
+                disabled={saveMutation.isPending}
+                onClick={() => router.push(basePath)}
+              >
+                Cancel
+              </Button>
+            )}
           </div>
         </form>
       </Form>

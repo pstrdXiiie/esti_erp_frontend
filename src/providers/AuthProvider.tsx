@@ -4,6 +4,7 @@ import { createContext, useContext, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { frappe, setCSRFToken } from "@/lib/frappe"
+import frappeClient from "@/lib/frappe"
 
 interface AuthUser {
   user: string
@@ -33,7 +34,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryFn: async () => {
       try {
         const me = await frappe.me()
+        console.log("[DEBUG] csrf_token received from /me:", me.csrf_token)
         setCSRFToken(me.csrf_token)
+        console.log("[DEBUG] header now set to:", frappeClient.defaults.headers.common["X-Frappe-CSRF-Token"])
+        // setCSRFToken(me.csrf_token)
         return me
       } catch {
         return null
@@ -47,11 +51,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await queryClient.invalidateQueries({ queryKey: ME_QUERY_KEY })
   }
 
-  async function logout() {
+ async function logout() {
+  try {
     await frappe.logout()
+  } catch (err) {
+    console.error("Logout request failed, clearing session locally anyway:", err)
+  } finally {
     queryClient.setQueryData(ME_QUERY_KEY, null)
     router.push("/login")
   }
+}
 
   function hasModule(module: string) {
     return user?.modules.includes(module) ?? false
