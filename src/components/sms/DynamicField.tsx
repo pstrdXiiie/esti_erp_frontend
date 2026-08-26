@@ -3,6 +3,7 @@
 import type { Control, FieldValues, Path } from "react-hook-form"
 import type { FieldSpec } from "@/lib/forms/types"
 import { Input } from "@/components/ui/input"
+
 import {
   Select,
   SelectContent,
@@ -30,6 +31,31 @@ export function DynamicField<T extends FieldValues>({
   control: Control<T>
   spec: FieldSpec
 }) {
+  if (spec.fieldtype === "Check") {
+    return (
+      <FormField
+        control={control}
+        name={spec.fieldname as Path<T>}
+        render={({ field }) => (
+          <FormItem className="flex flex-row items-center gap-2 space-y-0">
+            <FormControl>
+              <input
+                type="checkbox"
+                checked={!!field.value}
+                onChange={(e) => field.onChange(e.target.checked)}
+                disabled={spec.readOnly}
+                className="h-4 w-4 rounded border-gray-300"
+              />
+            </FormControl>
+            <FormLabel className="font-normal text-sm text-slate-700">
+              {spec.label}
+              {spec.required && <span className="text-red-500 ml-0.5">*</span>}
+            </FormLabel>
+          </FormItem>
+        )}
+      />
+    )
+  }
   return (
     <FormField
       control={control}
@@ -41,6 +67,7 @@ export function DynamicField<T extends FieldValues>({
             {spec.required ? " *" : ""}
           </FormLabel>
           <FormControl>
+          
             {spec.fieldtype === "Select" ? (
               <Select
                 onValueChange={field.onChange}

@@ -7,7 +7,7 @@ import { useAuth } from "@/providers/AuthProvider"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
-
+import { AppBreadcrumb } from "@/components/breadcrumbs/app-breadcrumb"
 
 
 const NAV_ITEMS: Array<{ module: string; label: string; href: string }> = [
@@ -79,8 +79,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
       <main className="flex-1 p-6">
-        
-          {children}
+        <AppBreadcrumb />
+         <div className="mt-4">{children}</div> 
         
       </main>
     </div>

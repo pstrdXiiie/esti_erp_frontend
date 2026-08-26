@@ -249,6 +249,27 @@ export function MasterDetailScreen({ spec }: { spec: FormSpec }) {
                 )}
                 className="px-6 py-6"
               >
+                {/* {(() => {
+                  const sections = Array.from(new Set(spec.fields.map((f) => f.section ?? "default")))
+                  return (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                      {sections.map((sectionKey) => (
+                        <div
+                          key={sectionKey}
+                          className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4"
+                        >
+                          <div className="flex flex-col gap-4">
+                            {spec.fields
+                              .filter((f) => (f.section ?? "default") === sectionKey)
+                              .map((f) => (
+                                <DynamicField key={f.fieldname} control={form.control} spec={f} />
+                              ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                })()} */}
                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 md:grid-cols-2">
                   {spec.fields.map((f) => (
                     <DynamicField

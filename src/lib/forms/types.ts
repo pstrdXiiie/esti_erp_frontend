@@ -18,6 +18,10 @@ export type FieldType =
   | "Check"
   | "Link"
   | "Select"
+  | "Attach Image"
+  | "Button"
+  | "Autocomplete"
+  | "Signature"
 
 export interface FieldSpec {
   fieldname: string
@@ -28,6 +32,7 @@ export interface FieldSpec {
   required?: boolean
   readOnly?: boolean
   inListView?: boolean
+  section?: string
 }
 
 export interface FormSpec {
