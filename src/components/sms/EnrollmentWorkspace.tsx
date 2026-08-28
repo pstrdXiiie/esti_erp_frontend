@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useForm } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
@@ -68,24 +68,18 @@ export function EnrollmentWorkspace() {
       }),
   })
 
-  const activeSelectedName =
-    selectedName ?? (mode === "view" ? listQuery.data?.[0]?.name : undefined)
+  const activeName = selectedName ?? listQuery.data?.[0]?.name
 
   const docQuery = useQuery({
-    queryKey: [spec.doctype, activeSelectedName],
-    queryFn: () => frappe.getDoc<Record<string, unknown>>(spec.doctype, activeSelectedName!),
-    enabled: !!activeSelectedName && mode !== "new",
+    queryKey: [spec.doctype, activeName],
+    queryFn: () => frappe.getDoc<Record<string, unknown>>(spec.doctype, activeName!),
+    enabled: !!activeName && mode !== "new",
   })
 
-  const [rows, setRows] = useState<Array<Record<string, unknown>>>([])
-
-  useEffect(() => {
-    if (mode === "new") {
-      setRows([{}])
-      return
-    }
+  const rows = useMemo<Array<Record<string, unknown>>>(() => {
+    if (mode === "new") return [{}]
     const existing = docQuery.data?.[spec.childTable?.fieldname ?? ""]
-    setRows(Array.isArray(existing) && existing.length ? existing : [{}])
+    return Array.isArray(existing) && existing.length ? existing : [{}]
   }, [docQuery.data, mode])
 
   const form = useForm<Record<string, unknown>>({
@@ -106,9 +100,9 @@ export function EnrollmentWorkspace() {
         email_address: values.email_address,
         [spec.childTable!.fieldname]: [childRow],
       }
-      return mode === "new" || !activeSelectedName
+      return mode === "new" || !activeName
         ? frappe.createDoc(spec.doctype, payload)
-        : frappe.updateDoc(spec.doctype, activeSelectedName, payload)
+        : frappe.updateDoc(spec.doctype, activeName, payload)
     },
     onSuccess: (saved) => {
       toast.success("Enrollment saved")
@@ -181,7 +175,7 @@ export function EnrollmentWorkspace() {
                   setMode("view")
                 }}
                 className={`rounded-md border p-2 text-left text-sm hover:bg-slate-50 ${
-                  selectedName === row.name && mode !== "new" ? "border-slate-900 bg-slate-50" : ""
+                    activeName === row.name && mode !== "new" ? "border-slate-900 bg-slate-50" : ""
                 }`}
               >
                 <div className="font-medium">
@@ -198,7 +192,7 @@ export function EnrollmentWorkspace() {
 
       {/* Center panel: tabbed detail form */}
       <div id="enrollment-printable" className="rounded-lg border p-4">
-        {activeSelectedName && mode !== "new" && docQuery.isLoading ? (
+        {activeName && mode !== "new" && docQuery.isLoading ? (
           <Skeleton className="h-96 w-full" />
         ) : (
           <Form {...form}>
@@ -269,7 +263,7 @@ export function EnrollmentWorkspace() {
 
         <div className="mt-2 flex flex-col gap-2">
           {mode === "view" ? (
-            <Button onClick={() => setMode("edit")} disabled={!selectedName}>
+            <Button onClick={() => setMode("edit")} disabled={!activeName}>
               Edit student
             </Button>
           ) : (
@@ -284,7 +278,7 @@ export function EnrollmentWorkspace() {
           <Button
             variant="outline"
             className="text-red-600 hover:bg-red-100"
-            disabled={!selectedName || mode === "new"}
+            disabled={!activeName || mode === "new"}
             onClick={() => setDeleteOpen(true)}
           >
             Delete student
@@ -295,7 +289,7 @@ export function EnrollmentWorkspace() {
           <Button variant="outline" onClick={() => listQuery.refetch()}>
             Refresh
           </Button>
-          <Button variant="outline" onClick={handlePrint} disabled={!selectedName}>
+          <Button variant="outline" onClick={handlePrint} disabled={!activeName}>
             Print
           </Button>
           {mode !== "view" && (

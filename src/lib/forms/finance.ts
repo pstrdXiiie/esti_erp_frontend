@@ -10,6 +10,351 @@ import type { EntrySpec, FormSpec } from "@/lib/forms/types"
  * `payment_schedule` (erpnext's native Payment Schedule child table on SMS
  * Student Assessment) is out of scope for this pass per the migration plan.
  */
+export const studentacc: FormSpec = {
+  doctype: "SMS Student Account",
+  title: "Student Account",
+  fields: [
+    { fieldname: "student_number", label: "Student Number", fieldtype: "Data", section: "Student Information", inListView: true },
+    { fieldname: "school_year", label: "School Year", fieldtype: "Data", section: "Student Information" },
+    { fieldname: "semester", label: "Semester", fieldtype: "Select", options: "1st Semester\n2nd Semester\n3rd Semester\nSummer\n1st Quarter\n2nd Quarter\n3rd Quarter\n4th Quarter", section: "Student Information" },
+    { fieldname: "assessment", label: "Assessment", fieldtype: "Select", options: "Tuition & Fees\nMiscellaneous Fees\nLaboratory Fees", section: "Assessment & Balance" },
+    { fieldname: "current_balance", label: "Current Balance", fieldtype: "Currency", readOnly: true, section: "Assessment & Balance" },
+    { fieldname: "payment", label: "Payment", fieldtype: "Select", options: "Full Payment\nPartial Payment\nInstallment", section: "Payment Details" },
+    { fieldname: "amount", label: "Amount", fieldtype: "Currency", section: "Payment Details" },
+    { fieldname: "or_number", label: "OR Number", fieldtype: "Data", section: "Payment Details" },
+    { fieldname: "payment_date", label: "Date", fieldtype: "Date", section: "Payment Details" },
+    { fieldname: "enable_balance_adjustment", label: "Enable Balance Adjustment", fieldtype: "Check", section: "Balance Adjustment" },
+    { fieldname: "adjustment_balance", label: "Adjustment Balance", fieldtype: "Currency", section: "Balance Adjustment", dependsOn: "enable_balance_adjustment" },
+  ],
+}
+
+export const sundryacc: FormSpec = {
+  doctype: "SMS Sundry Account",
+  title: "Sundry Account",
+  fields: [
+    { fieldtype: "Section Break", label: "Transaction Details", fieldname: "" },
+    { fieldname: "payee", label: "Payee", fieldtype: "Data", required: true },
+    { fieldname: "payment", label: "Payment For", fieldtype: "Data" },
+    { fieldname: "amount", label: "Amount", fieldtype: "Currency", required: true },
+    { fieldtype: "Column Break", fieldname: "", label: "" },
+    { fieldname: "or_num", label: "OR Number", fieldtype: "Data" },
+    { fieldname: "date", label: "Transaction Date", fieldtype: "Date", required: true },
+  ],
+}
+
+export const sundryaccSearch: FormSpec = {
+  doctype: "SMS Sundry Account Search",
+  title: "Sundry Account Search Filters",
+  fields: [
+    {
+      fieldtype: "Section Break", label: "Search & Filters",
+      fieldname: ""
+    },
+    { fieldname: "payee_searchby", label: "Filter by Payee", fieldtype: "Check" },
+    { 
+      fieldname: "payee_searchby_input", 
+      label: "Payee Name", 
+      fieldtype: "Data", 
+      dependsOn: "eval:doc.payee_searchby==1" 
+    },
+
+    {
+      fieldtype: "Column Break",
+      fieldname: "",
+      label: ""
+    },
+    { fieldname: "date_searchby", label: "Filter Date", fieldtype: "Date" },
+  ],
+}
+
+export const pettycash: FormSpec = {
+  doctype: "SMS Petty Cash Voucher",
+  title: "Petty Cash Voucher",
+
+  fields: [
+    {
+      fieldname: "pcv_number",
+      label: "PCV Number",
+      fieldtype: "Data",
+      readOnly: true,
+      section: "Transaction Details",
+      inListView: true,
+    },
+
+    {
+      fieldname: "transaction_date",
+      label: "Date",
+      fieldtype: "Date",
+      required: true,
+      section: "Transaction Details",
+    },
+
+    {
+      fieldname: "petty_cash_fund",
+      label: "Petty Cash Fund",
+      fieldtype: "Currency",
+      required: true,
+      section: "Transaction Details",
+    },
+
+    {
+      fieldname: "available_fund",
+      label: "Available Fund",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Transaction Details",
+    },
+
+    {
+      fieldname: "consumed_fund",
+      label: "Consumed Fund",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Transaction Details",
+    },
+
+    {
+      fieldname: "particulars",
+      label: "Particulars",
+      fieldtype: "Data",
+      required: true,
+      section: "Transaction Information",
+    },
+
+    {
+      fieldname: "notes",
+      label: "Notes",
+      fieldtype: "Small Text",
+      section: "Transaction Information",
+    },
+
+    {
+      fieldname: "account_entries",
+      label: "Account Entries",
+      fieldtype: "Table",
+      options: "SMS Petty Cash Account Entry",
+      section: "Account Entries",
+    },
+
+    {
+      fieldname: "total_debit",
+      label: "Total Debit",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Totals",
+    },
+
+    {
+      fieldname: "total_credit",
+      label: "Total Credit",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Totals",
+    },
+  ],
+};
+
+export const pettycashEntry: FormSpec = {
+  doctype: "SMS Petty Cash Account Entry",
+  title: "Petty Cash Account Entry",
+
+  fields: [
+    {
+      fieldname: "account",
+      label: "Account",
+      fieldtype: "Link",
+      options: "Account",
+      required: true,
+      inListView: true,
+    },
+
+    {
+      fieldname: "account_name",
+      label: "Account Name",
+      fieldtype: "Data",
+      readOnly: true,
+      inListView: true,
+    },
+
+    {
+      fieldname: "debit",
+      label: "Debit",
+      fieldtype: "Currency",
+      inListView: true,
+    },
+
+    {
+      fieldname: "credit",
+      label: "Credit",
+      fieldtype: "Currency",
+      inListView: true,
+    },
+  ],
+};
+
+export const cashReceipt: FormSpec = {
+  doctype: "SMS Payment and Cash Receipt Entry",
+  title: "Cash Receipt Transaction",
+
+  fields: [
+    // Payment Type
+    {
+      fieldname: "payment_type",
+      label: "Payment Type",
+      fieldtype: "Select",
+      options:
+        "Student Payment (From Assessment)\nStudent Payment (Other than Assessment)",
+      required: true,
+      section: "Payment Type",
+    },
+
+    {
+      fieldname: "semester",
+      label: "Semester",
+      fieldtype: "Select",
+      options: "1st Semester\n2nd Semester\n3rd Semester\nSummer",
+      required: true,
+      section: "Payment Type",
+    },
+
+    {
+      fieldname: "school_year",
+      label: "School Year",
+      fieldtype: "Data",
+      required: true,
+      section: "Payment Type",
+    },
+
+    // Student Information
+    {
+      fieldname: "student_number",
+      label: "Student No.",
+      fieldtype: "Link",
+      options: "Student",
+      required: true,
+      section: "Student Information",
+      inListView: true,
+    },
+
+    {
+      fieldname: "payee",
+      label: "Payee",
+      fieldtype: "Data",
+      readOnly: true,
+      section: "Student Information",
+    },
+
+    {
+      fieldname: "course",
+      label: "Course",
+      fieldtype: "Data",
+      readOnly: true,
+      section: "Student Information",
+    },
+
+    // Assessment
+    {
+      fieldname: "assessment_fees",
+      label: "Assessment of Fees",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Assessment & Balance",
+    },
+
+    {
+      fieldname: "assessment",
+      label: "Assessment",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Assessment & Balance",
+    },
+
+    {
+      fieldname: "payment_due",
+      label: "Payment Due",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Assessment & Balance",
+    },
+
+    {
+      fieldname: "balance",
+      label: "Balance",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Assessment & Balance",
+    },
+
+    {
+      fieldname: "total_payments",
+      label: "Total Payments",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Assessment & Balance",
+    },
+
+    {
+      fieldname: "payment_period",
+      label: "Payment Period",
+      fieldtype: "Select",
+      options: "Prelim\nMidterm\nFinal",
+      section: "Assessment & Balance",
+    },
+
+    // Receipt
+    {
+      fieldname: "or_number",
+      label: "OR Number",
+      fieldtype: "Data",
+      required: true,
+      section: "Receipt Details",
+      inListView: true,
+    },
+
+    {
+      fieldname: "receipt_date",
+      label: "Date",
+      fieldtype: "Date",
+      required: true,
+      section: "Receipt Details",
+    },
+
+    {
+      fieldname: "amount",
+      label: "Amount",
+      fieldtype: "Currency",
+      required: true,
+      section: "Receipt Details",
+    },
+
+    {
+      fieldname: "account_charged",
+      label: "Account Charged",
+      fieldtype: "Link",
+      options: "Account",
+      required: true,
+      section: "Receipt Details",
+    },
+
+    // Payment
+    {
+      fieldname: "mode_of_payment",
+      label: "Mode of Payment",
+      fieldtype: "Select",
+      options: "Cash\nCheck",
+      required: true,
+      section: "Payment Details",
+    },
+
+    {
+      fieldname: "check_number",
+      label: "Check Number",
+      fieldtype: "Data",
+      section: "Payment Details",
+      dependsOn: "mode_of_payment == 'Check'",
+    },
+  ],
+};
 
 export const discountSpec: FormSpec = {
   doctype: "SMS Discount",
@@ -121,6 +466,49 @@ export const assessmentSpec: EntrySpec = {
       { fieldname: "amount", label: "Amount", fieldtype: "Currency", required: true },
       { fieldname: "true_amount", label: "True Amount", fieldtype: "Currency" },
       { fieldname: "amount_paid", label: "Amount Paid", fieldtype: "Currency" },
+    ],
+  },
+}
+
+export const studentaccs: FormSpec = {
+  doctype: "SMS Student Account",
+  title: "Student Account",
+  fields: [
+    { fieldname: "student_number", label: "Student Number", fieldtype: "Data", section: "Student Information", inListView: true },
+    { fieldname: "school_year", label: "School Year", fieldtype: "Data", section: "Student Information" },
+    { fieldname: "semester", label: "Semester", fieldtype: "Select", options: "1st Semester\n2nd Semester\nSummer", section: "Student Information" },
+    { fieldname: "assessment", label: "Assessment", fieldtype: "Select", options: "Tuition & Fees\nMiscellaneous Fees\nLaboratory Fees", section: "Assessment & Balance" },
+    { fieldname: "current_balance", label: "Current Balance", fieldtype: "Currency", readOnly: true, section: "Assessment & Balance" },
+    { fieldname: "payment", label: "Payment", fieldtype: "Select", options: "Full Payment\nPartial Payment\nInstallment", section: "Payment Details" },
+    { fieldname: "amount", label: "Amount", fieldtype: "Currency", section: "Payment Details" },
+    { fieldname: "or_number", label: "OR Number", fieldtype: "Data", section: "Payment Details" },
+    { fieldname: "payment_date", label: "Date", fieldtype: "Date", section: "Payment Details" },
+    { fieldname: "enable_balance_adjustment", label: "Enable Balance Adjustment", fieldtype: "Check", section: "Balance Adjustment" },
+    { fieldname: "adjustment_balance", label: "Adjustment Balance", fieldtype: "Currency", section: "Balance Adjustment", dependsOn: "enable_balance_adjustment" },
+  ],
+}
+
+export const chequeVoucherEntry: EntrySpec = {
+  doctype: "Cheque Voucher Transaction",
+  title: "Cheque Voucher Transaction",
+  submittable: true,
+  fields: [
+    { fieldname: "payee", label: "Payee", fieldtype: "Data", required: true },
+    { fieldname: "date", label: "Date", fieldtype: "Date", required: true },
+    { fieldname: "check_number", label: "Check Number", fieldtype: "Data" },
+    { fieldname: "amount", label: "Amount", fieldtype: "Currency", required: true },
+    { fieldname: "check_date", label: "Check Date", fieldtype: "Date" },
+    { fieldname: "notes", label: "Notes", fieldtype: "Small Text" },
+  ],
+  childTable: {
+    fieldname: "gl_entries",
+    doctype: "Cheque Voucher GL Entry",
+    variant: "gl-entries",
+    columns: [
+      { fieldname: "account", label: "Acct #", fieldtype: "Link", options: "Chart of Account" },
+      { fieldname: "account_name", label: "Acct Name", fieldtype: "Data", readOnly: true },
+      { fieldname: "debit", label: "Debit", fieldtype: "Currency" },
+      { fieldname: "credit", label: "Credit", fieldtype: "Currency" },
     ],
   },
 }

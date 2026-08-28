@@ -22,6 +22,10 @@ export type FieldType =
   | "Button"
   | "Autocomplete"
   | "Signature"
+  | "Column Break"
+  | "Section Break"
+  | "Table"
+
 
 export interface FieldSpec {
   fieldname: string
@@ -33,6 +37,8 @@ export interface FieldSpec {
   readOnly?: boolean
   inListView?: boolean
   section?: string
+  dependsOn?: string
+
 }
 
 export interface FormSpec {
@@ -49,6 +55,7 @@ export interface ChildTableSpec {
   fieldname: string
   doctype: string
   columns: FieldSpec[]
+  variant?: "gl-entries"
 }
 
 export interface EntrySpec extends FormSpec {

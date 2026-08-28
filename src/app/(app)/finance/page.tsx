@@ -1,9 +1,11 @@
 import Link from "next/link"
 import {
   ArrowUpRight,
-  CreditCard,
-  Percent,
-  Wallet,
+  ChartNoAxesCombined,
+  BanknoteArrowUp,
+  ChartPieIcon,
+  ToolCase,
+
 } from "lucide-react"
 
 import {
@@ -15,27 +17,35 @@ import {
 
 const SCREENS = [
   {
-    href: "/finance/assessments",
-    title: "Student Assessments",
+    href: "/finance/chartsofaccounts",
+    title: "Charts of Accounts",
     description:
-      "Assess a student's fees for a term, submit, and record payments.",
-    icon: CreditCard,
-    className: "md:col-span-2 md:row-span-2",
+      "Manage accounnts",
+    icon: ChartNoAxesCombined,
+    className: "md:col-span-1 md:row-span-1",
   },
   {
-    href: "/finance/discounts",
-    title: "Discounts",
+    href: "/finance/transactions",
+    title: "Transactions",
     description:
-      "Tuition and misc-fee discount codes applied at assessment time.",
-    icon: Percent,
-    className: "md:col-span-1",
+      "Record and manage financial activities such as payments, collections, invoices, and expenses.",
+    icon: BanknoteArrowUp,
+    className: "md:col-span-2 md:row-span-1",
   },
   {
-    href: "/finance/wallets",
-    title: "Student Wallets",
+    href: "/finance/financialreport",
+    title: "Financial Repports",
     description:
-      "Look up a student's e-cash wallet balance and record top-ups or payments.",
-    icon: Wallet,
+      "View summaries and reports of the institution’s financial activities and performance.",
+    icon: ChartPieIcon,
+    className: "md:col-span-2",
+  },
+   {
+    href: "/finance/maintenance",
+    title: "Maintenance",
+    description:
+      "Manage finance settings.",
+    icon: ToolCase,
     className: "md:col-span-1",
   },
 ]

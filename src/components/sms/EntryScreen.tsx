@@ -15,6 +15,7 @@ import { ChildTableGrid } from "@/components/sms/ChildTableGrid"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
+import { GLEntryGrid } from "@/components/sms/GLEntryGrid"
 
 /**
  * The ~23 legacy transaction-entry screens (blueprint §5.1): a header plus an
@@ -143,11 +144,11 @@ export function EntryScreen({
           {spec.childTable && (
             <>
               <Separator />
-              <ChildTableGrid
-                spec={spec.childTable}
-                rows={rows}
-                onChange={setRows}
-              />
+              {spec.childTable.variant === "gl-entries" ? (
+                <GLEntryGrid spec={spec.childTable} rows={rows} onChange={setRows} />
+              ) : (
+                <ChildTableGrid spec={spec.childTable} rows={rows} onChange={setRows} />
+              )}
             </>
           )}
 
