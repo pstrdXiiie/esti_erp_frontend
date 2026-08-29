@@ -8,7 +8,8 @@ import { toast } from "sonner"
 
 import { frappe, getErrorMessage } from "@/lib/frappe"
 import { GLEntryGrid } from "@/components/sms/GLEntryGrid"
-import { Button } from "@/components/ui/button"
+import { FinancePropertyPanel } from "@/components/finance/FinancePropertyPanel"
+import { financeRowInput } from "@/lib/finance-ui"
 
 interface ChequeVoucherValues {
   payee?: string
@@ -41,19 +42,25 @@ export function ChequeVoucherForm({ name, basePath }: { name?: string; basePath?
   const { register, handleSubmit, reset } = useForm<ChequeVoucherValues>()
 
   useEffect(() => {
-    if (doc) {
-      reset({
-        payee: String(doc.payee ?? ""),
-        date: String(doc.date ?? ""),
-        check_number: String(doc.check_number ?? ""),
-        check_date: String(doc.check_date ?? ""),
-        amount: String(doc.amount ?? ""),
-        notes: String(doc.notes ?? ""),
-      })
-      const existing = doc.gl_entries
-      setRows(Array.isArray(existing) ? (existing as Array<Record<string, unknown>>) : [])
+    if (!doc) return
+
+    reset({
+      payee: String(doc.payee ?? ""),
+      date: String(doc.date ?? ""),
+      check_number: String(doc.check_number ?? ""),
+      check_date: String(doc.check_date ?? ""),
+      amount: String(doc.amount ?? ""),
+      notes: String(doc.notes ?? ""),
+    })
+
+    const nextRows = Array.isArray(doc.gl_entries)
+      ? (doc.gl_entries as Array<Record<string, unknown>>)
+      : []
+
+    if (rows.length !== nextRows.length || rows.some((row, index) => row !== nextRows[index])) {
+      queueMicrotask(() => setRows(nextRows))
     }
-  }, [doc, reset])
+  }, [doc, reset, rows])
 
   const saveMutation = useMutation({
     mutationFn: async (values: ChequeVoucherValues) => {
@@ -78,99 +85,84 @@ export function ChequeVoucherForm({ name, basePath }: { name?: string; basePath?
   }
 
   return (
-    <form onSubmit={handleSubmit((values) => saveMutation.mutate(values))} className="max-w-[700px]">
-      <div className="rounded-md border border-[#D9DCE3] bg-[#F7F5F0] text-[#1B2A4A]">
-        <div className="flex items-start justify-between px-7 pb-4 pt-6">
-          <div>
-            <p className="font-serif text-[15px] font-semibold tracking-wide">Esti School Finance Office</p>
-            <p className="mt-0.5 text-[10px] tracking-wider text-[#5B6B85]">CHECK VOUCHER TRANSACTION</p>
-          </div>
-          <div className="text-right">
-            <p className="font-mono text-xs">CV# {name ?? "New"}</p>
-            <div className="mt-1 flex items-center justify-end gap-1.5">
+    <form onSubmit={handleSubmit((values) => saveMutation.mutate(values))}>
+      <FinancePropertyPanel
+        title={`Check Voucher Transaction — ${name ?? "New"}`}
+        onCancel={basePath ? () => router.push(basePath) : undefined}
+        onSave={handleSubmit((values) => saveMutation.mutate(values))}
+        saveLabel="Post Voucher"
+        isSaving={saveMutation.isPending}
+      >
+        <div className="m-4 rounded-md border border-[#D9DCE3] bg-[#F7F5F0] text-[#1B2A4A]">
+          <div className="flex items-start justify-between px-7 pb-4 pt-6">
+            <div>
+              <p className="font-serif text-[15px] font-semibold tracking-wide">Esti School Finance Office</p>
+              <p className="mt-0.5 text-[10px] tracking-wider text-[#5B6B85]">DISBURSEMENT VOUCHER</p>
+            </div>
+            <div className="text-right">
               <span className="text-[10px] text-[#5B6B85]">Date</span>
               <input
                 type="date"
                 {...register("date")}
-                className="border-b border-[#D9DCE3] bg-transparent px-0 py-0.5 text-right font-mono text-xs text-[#1B2A4A] focus:outline-none"
+                className="ml-1.5 border-b border-[#D9DCE3] bg-transparent px-0 py-0.5 text-right font-mono text-xs text-[#1B2A4A] focus:outline-none"
               />
             </div>
           </div>
-        </div>
 
-        <div className="flex items-baseline gap-2.5 px-7 pb-1 pt-1.5">
-          <span className="whitespace-nowrap text-xs text-[#5B6B85]">Payee</span>
-          <input
-            {...register("payee")}
-            placeholder="Payee name"
-            className="flex-1 border-b border-[#1B2A4A] bg-transparent px-0.5 py-1 font-serif text-[15px] italic text-[#1B2A4A] focus:outline-none"
-          />
-          <span className="text-xs text-[#5B6B85]">Amount ₱</span>
-          <input
-            {...register("amount")}
-            placeholder="0.00"
-            className="w-28 border-b border-[#1B2A4A] bg-transparent px-0.5 py-1 text-right font-mono text-[15px] text-[#1B2A4A] focus:outline-none"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-5 px-7 pb-5 pt-3">
-          <div>
-            <p className="mb-1 text-[10px] tracking-wide text-[#5B6B85]">CHECK NUMBER</p>
+          <div className="flex items-baseline gap-2.5 px-7 pb-1 pt-1.5">
+            <span className="whitespace-nowrap text-xs text-[#5B6B85]">Payee</span>
             <input
-              {...register("check_number")}
-              placeholder="Check number"
-              className="w-full border-b border-[#D9DCE3] bg-transparent px-0.5 py-1 font-mono text-sm text-[#1B2A4A] focus:outline-none"
+              {...register("payee")}
+              placeholder="Payee name"
+              className="flex-1 border-b border-[#1B2A4A] bg-transparent px-0.5 py-1 font-serif text-[15px] italic text-[#1B2A4A] focus:outline-none"
+            />
+            <span className="text-xs text-[#5B6B85]">Amount ₱</span>
+            <input
+              {...register("amount")}
+              placeholder="0.00"
+              className="w-28 border-b border-[#1B2A4A] bg-transparent px-0.5 py-1 text-right font-mono text-[15px] text-[#1B2A4A] focus:outline-none"
             />
           </div>
-          <div>
-            <p className="mb-1 text-[10px] tracking-wide text-[#5B6B85]">CHECK DATE</p>
-            <input
-              type="date"
-              {...register("check_date")}
-              className="w-full border-b border-[#D9DCE3] bg-transparent px-0.5 py-1 font-mono text-sm text-[#1B2A4A] focus:outline-none"
-            />
+
+          <div className="grid grid-cols-2 gap-5 px-7 pb-5 pt-3">
+            <div>
+              <p className="mb-1 text-[10px] tracking-wide text-[#5B6B85]">CHECK NUMBER</p>
+              <input
+                {...register("check_number")}
+                placeholder="Check number"
+                className="w-full border-b border-[#D9DCE3] bg-transparent px-0.5 py-1 font-mono text-sm text-[#1B2A4A] focus:outline-none"
+              />
+            </div>
+            <div>
+              <p className="mb-1 text-[10px] tracking-wide text-[#5B6B85]">CHECK DATE</p>
+              <input
+                type="date"
+                {...register("check_date")}
+                className="w-full border-b border-[#D9DCE3] bg-transparent px-0.5 py-1 font-mono text-sm text-[#1B2A4A] focus:outline-none"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-5 px-7 pb-4.5">
+            <div className="w-52 text-center">
+              <div className="h-5.5 border-b border-[#1B2A4A]" />
+              <p className="mt-0.5 text-[9px] tracking-wide text-[#5B6B85]">AUTHORIZED SIGNATURE</p>
+            </div>
+          </div>
+
+          <div className="flex justify-between rounded-b-md bg-[#1B2A4A] px-7 py-2">
+            <span className="font-mono text-xs tracking-[0.18em] text-[#E7EAF2]">⑈{name ?? "NEW"}⑈</span>
+            <span className="font-mono text-xs tracking-[0.18em] text-[#E7EAF2]">₱ auto</span>
           </div>
         </div>
 
-        <div className="flex justify-end gap-5 px-7 pb-4.5">
-          <div className="w-52 text-center">
-            <div className="h-5.5 border-b border-[#1B2A4A]" />
-            <p className="mt-0.5 text-[9px] tracking-wide text-[#5B6B85]">AUTHORIZED SIGNATURE</p>
-          </div>
-        </div>
-
-        <div className="flex justify-between rounded-b-md bg-[#1B2A4A] px-7 py-2">
-          <span className="font-mono text-xs tracking-[0.18em] text-[#E7EAF2]">⑈{name ?? "NEW"}⑈</span>
-          <span className="font-mono text-xs tracking-[0.18em] text-[#E7EAF2]">₱ auto</span>
-        </div>
-      </div>
-
-      <div className="my-4 border-t-2 border-dashed border-[#D9DCE3]" />
-
-      <div className="rounded-md border border-[#D9DCE3] bg-white p-5">
         <GLEntryGrid spec={GL_ENTRIES_SPEC} rows={rows} onChange={setRows} />
-      </div>
 
-      <div className="mt-4">
-        <p className="mb-1 text-[10px] tracking-wide text-[#5B6B85]">NOTES</p>
-        <textarea
-          {...register("notes")}
-          placeholder="Notes"
-          rows={2}
-          className="w-full rounded-md border border-[#D9DCE3] bg-white px-3 py-2 text-sm text-[#1B2A4A] focus:outline-none"
-        />
-      </div>
-
-      <div className="flex justify-end gap-2.5 pt-4">
-        {basePath && (
-          <Button type="button" variant="outline" onClick={() => router.push(basePath)}>
-            Cancel
-          </Button>
-        )}
-        <Button type="submit" disabled={saveMutation.isPending} className="bg-[#1B2A4A] text-white hover:bg-[#243863]">
-          {saveMutation.isPending ? "Saving…" : "Post Voucher"}
-        </Button>
-      </div>
+        <div className="border-t border-zinc-200 px-5 py-4">
+          <p className="mb-1 text-xs text-zinc-500">Notes</p>
+          <textarea {...register("notes")} placeholder="Notes" rows={2} className={`rounded border border-zinc-200 ${financeRowInput}`} />
+        </div>
+      </FinancePropertyPanel>
     </form>
   )
 }

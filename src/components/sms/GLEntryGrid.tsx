@@ -5,23 +5,15 @@ import { useQuery } from "@tanstack/react-query"
 
 import { frappe } from "@/lib/frappe"
 import type { ChildTableSpec } from "@/lib/forms/types"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+  financeRowInput,
+  financeRowSelect,
+  financePrimaryButton,
+  financeBalanceBadge,
+  financeAccentToggleOn,
+  financeAccentToggleOff,
+} from "@/lib/finance-ui"
+import { FinancePropertySection } from "@/components/finance/FinancePropertyPanel"
 
 interface ChartOfAccountRow {
   name: string
@@ -64,6 +56,8 @@ export function GLEntryGrid({
     )
   }, [rows])
 
+  const isBalanced = rows.length > 0 && totals.debit === totals.credit
+
   function addRow() {
     if (!account || !amount) return
     const numAmount = Number(amount)
@@ -87,98 +81,82 @@ export function GLEntryGrid({
   }
 
   return (
-    <div className="grid gap-3">
-      <p className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-        General Ledger Entries
-      </p>
-
-      <div className="flex flex-wrap items-end gap-2 rounded-md border p-3">
-        <div className="min-w-[220px] flex-1">
-          <p className="mb-1 text-xs text-muted-foreground">Chart of Account</p>
-          <Select value={account} onValueChange={setAccount}>
-            <SelectTrigger>
-              <SelectValue placeholder="Select account" />
-            </SelectTrigger>
-            <SelectContent>
-              {accounts.map((a) => (
-                <SelectItem key={a.name} value={a.name}>
-                  {a.account_number} - {a.account_name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="w-40">
-          <p className="mb-1 text-xs text-muted-foreground">Amount</p>
-          <Input
-            type="number"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="0.00"
-          />
-        </div>
-
-        <div className="flex items-center gap-1">
-          <Button
+    <FinancePropertySection
+      title="General Ledger Entries"
+      right={
+        rows.length > 0 ? (
+          <span className={financeBalanceBadge(isBalanced)}>
+            {isBalanced
+              ? `✓ Balanced · ₱${totals.debit.toFixed(2)}`
+              : `⚠ Out of balance · DR ${totals.debit.toFixed(2)} / CR ${totals.credit.toFixed(2)}`}
+          </span>
+        ) : undefined
+      }
+    >
+      {rows.map((row, i) => (
+        <div
+          key={i}
+          className="grid grid-cols-[1fr_90px_90px_20px] items-center border-b border-zinc-100 py-1.5 text-[13px] last:border-b-0"
+        >
+          <span>
+            {String(row.account ?? "")} · {String(row.account_name ?? "")}
+          </span>
+          <span className="text-right font-mono">
+            {Number(row.debit ?? 0) > 0 ? Number(row.debit).toFixed(2) : "—"}
+          </span>
+          <span className="text-right font-mono">
+            {Number(row.credit ?? 0) > 0 ? Number(row.credit).toFixed(2) : "—"}
+          </span>
+          <button
             type="button"
-            size="sm"
-            variant={drCr === "DR" ? "default" : "outline"}
-            className={drCr === "DR" ? "bg-slate-800" : ""}
+            onClick={() => removeRow(i)}
+            className="text-center text-xs text-zinc-400 hover:text-red-600"
+          >
+            ✕
+          </button>
+        </div>
+      ))}
+
+      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+        <select
+          className={`min-w-[160px] flex-1 rounded border border-zinc-200 ${financeRowSelect}`}
+          value={account}
+          onChange={(e) => setAccount(e.target.value)}
+        >
+          <option value="">+ Add account…</option>
+          {accounts.map((a) => (
+            <option key={a.name} value={a.name}>
+              {a.account_number} - {a.account_name}
+            </option>
+          ))}
+        </select>
+        <input
+          className={`w-20 shrink-0 rounded border border-zinc-200 ${financeRowInput}`}
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="0.00"
+        />
+        <div className="flex shrink-0 overflow-hidden rounded border border-zinc-200">
+          <button
+            type="button"
             onClick={() => setDrCr("DR")}
+            className={`shrink-0 whitespace-nowrap px-2.5 py-1.5 text-[11px] ${drCr === "DR" ? financeAccentToggleOn : financeAccentToggleOff}`}
           >
             DR
-          </Button>
-          <Button
+          </button>
+          <button
             type="button"
-            size="sm"
-            variant={drCr === "CR" ? "default" : "outline"}
-            className={drCr === "CR" ? "bg-slate-800" : ""}
             onClick={() => setDrCr("CR")}
+            className={`shrink-0 whitespace-nowrap border-l border-zinc-200 px-2.5 py-1.5 text-[11px] ${drCr === "CR" ? financeAccentToggleOn : financeAccentToggleOff}`}
           >
             CR
-          </Button>
+          </button>
         </div>
-
-        <Button type="button" className="bg-slate-800" onClick={addRow}>
+        <button type="button" className={`shrink-0 ${financePrimaryButton}`} onClick={addRow}>
           Add
-        </Button>
+        </button>
       </div>
-
-      <div className="overflow-x-auto rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Acct #</TableHead>
-              <TableHead>Acct Name</TableHead>
-              <TableHead>Debit</TableHead>
-              <TableHead>Credit</TableHead>
-              <TableHead className="w-10" />
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {rows.map((row, i) => (
-              <TableRow key={i}>
-                <TableCell>{String(row.account ?? "")}</TableCell>
-                <TableCell>{String(row.account_name ?? "")}</TableCell>
-                <TableCell>{Number(row.debit ?? 0).toFixed(2)}</TableCell>
-                <TableCell>{Number(row.credit ?? 0).toFixed(2)}</TableCell>
-                <TableCell>
-                  <Button type="button" variant="ghost" size="sm" onClick={() => removeRow(i)}>
-                    ✕
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div className="flex justify-end gap-6 text-sm font-medium">
-        <span>Totals</span>
-        <span>DR {totals.debit.toFixed(2)}</span>
-        <span>CR {totals.credit.toFixed(2)}</span>
-      </div>
-    </div>
+    </FinancePropertySection>
   )
 }

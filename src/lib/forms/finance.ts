@@ -31,41 +31,76 @@ export const studentacc: FormSpec = {
 export const sundryacc: FormSpec = {
   doctype: "SMS Sundry Account",
   title: "Sundry Account",
-  fields: [
-    { fieldtype: "Section Break", label: "Transaction Details", fieldname: "" },
-    { fieldname: "payee", label: "Payee", fieldtype: "Data", required: true },
-    { fieldname: "payment", label: "Payment For", fieldtype: "Data" },
-    { fieldname: "amount", label: "Amount", fieldtype: "Currency", required: true },
-    { fieldtype: "Column Break", fieldname: "", label: "" },
-    { fieldname: "or_num", label: "OR Number", fieldtype: "Data" },
-    { fieldname: "date", label: "Transaction Date", fieldtype: "Date", required: true },
-  ],
-}
 
+  fields: [
+    {
+      fieldname: "payee",
+      label: "Payee",
+      fieldtype: "Data",
+      required: true,
+      section: "Transaction Details",
+      inListView: true,
+    },
+
+    {
+      fieldname: "payment",
+      label: "Payment For",
+      fieldtype: "Data",
+      section: "Transaction Details",
+    },
+
+    {
+      fieldname: "or_number",
+      label: "OR Number",
+      fieldtype: "Data",
+      section: "Transaction Details",
+    },
+
+    {
+      fieldname: "transaction_date",
+      label: "Transaction Date",
+      fieldtype: "Date",
+      required: true,
+      section: "Transaction Details",
+    },
+
+    {
+      fieldname: "amount",
+      label: "Amount",
+      fieldtype: "Currency",
+      required: true,
+      section: "Transaction Details",
+    },
+  ],
+};
 export const sundryaccSearch: FormSpec = {
   doctype: "SMS Sundry Account Search",
   title: "Sundry Account Search Filters",
+
   fields: [
     {
-      fieldtype: "Section Break", label: "Search & Filters",
-      fieldname: ""
-    },
-    { fieldname: "payee_searchby", label: "Filter by Payee", fieldtype: "Check" },
-    { 
-      fieldname: "payee_searchby_input", 
-      label: "Payee Name", 
-      fieldtype: "Data", 
-      dependsOn: "eval:doc.payee_searchby==1" 
+      fieldname: "payee_searchby",
+      label: "Filter by Payee",
+      fieldtype: "Check",
+      section: "Search & Filters",
     },
 
     {
-      fieldtype: "Column Break",
-      fieldname: "",
-      label: ""
+      fieldname: "payee_searchby_input",
+      label: "Payee Name",
+      fieldtype: "Data",
+      dependsOn: "eval:doc.payee_searchby==1",
+      section: "Search & Filters",
     },
-    { fieldname: "date_searchby", label: "Filter Date", fieldtype: "Date" },
+
+    {
+      fieldname: "date_searchby",
+      label: "Filter Date",
+      fieldtype: "Date",
+      section: "Search & Filters",
+    },
   ],
-}
+};
 
 export const pettycash: FormSpec = {
   doctype: "SMS Petty Cash Voucher",
@@ -129,27 +164,20 @@ export const pettycash: FormSpec = {
     },
 
     {
-      fieldname: "account_entries",
-      label: "Account Entries",
-      fieldtype: "Table",
-      options: "SMS Petty Cash Account Entry",
-      section: "Account Entries",
+      fieldname: "account",
+      label: "Chart of Account",
+      fieldtype: "Link",
+      options: "Account",
+      required: true,
+      section: "Account Details",
     },
 
     {
-      fieldname: "total_debit",
-      label: "Total Debit",
+      fieldname: "amount",
+      label: "Amount",
       fieldtype: "Currency",
-      readOnly: true,
-      section: "Totals",
-    },
-
-    {
-      fieldname: "total_credit",
-      label: "Total Credit",
-      fieldtype: "Currency",
-      readOnly: true,
-      section: "Totals",
+      required: true,
+      section: "Account Details",
     },
   ],
 };
@@ -355,6 +383,42 @@ export const cashReceipt: FormSpec = {
     },
   ],
 };
+
+export const journalvoucherentrySpec: FormSpec = {
+  doctype: "SMS Journal Voucher",
+  title: "Journal Vourcher",
+  fields: [
+    {fieldname: "account", label: "Account", fieldtype: "Link"},
+    {fieldname: "accounnt_number", label: "Account Number", fieldtype: "Data", readOnly: true },
+    {fieldname: "debit", label: "Debit", fieldtype: "Currency"},
+    {fieldname: "credit", label: "Credit", fieldtype: "Currency"},
+  ],
+}
+
+export const journalvoucherSpec: FormSpec = {
+  doctype: "SMS Journal Voucher",
+  title: "Journal Voucher",
+  fields: [
+    {fieldname: "naming_series", label: "JV#", fieldtype: "Select"},
+    {fieldname: "posting_date", label: "Date", fieldtype: "Data", readOnly: true},
+    {fieldname: "user_remark", label: "Notes", fieldtype: "Small Text"},
+    {fieldname: "accounts", label: "Entris", fieldtype: "Table"},
+    {fieldname: "total_debit", label: "Total Debit", fieldtype: "Currency"},
+    {fieldname: "total_credit", label: "Total Credit", fieldtype: "Currency" },
+  ],
+}
+
+export const pettycashvoucheritem: FormSpec ={
+  doctype: "SMS Petty Cash Voucher Item",
+  title: "Petty Cash Voucher Item",
+  fields: [
+    {fieldname: "account", label: "Account", fieldtype: "Link"},
+    {fieldname: "account_name", label: "Account name", fieldtype: "Data", readOnly: true},
+    {fieldname: "amount", label: "Amount", fieldtype: "Currency"},
+    {fieldname: "employee_no", label: "Employee No", fieldtype: "Link"},
+  ],
+}
+
 
 export const discountSpec: FormSpec = {
   doctype: "SMS Discount",

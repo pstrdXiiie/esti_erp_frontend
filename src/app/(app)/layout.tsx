@@ -43,8 +43,8 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex flex-1">
-      <aside className="w-64 shrink-0 border-r bg-muted/20 p-4 flex flex-col gap-4">
+    <div className="flex flex-1 bg-slate-50">
+      <aside className="sticky top-0 h-screen w-64 shrink-0 self-start overflow-y-auto border-r bg-muted/20 p-4 flex flex-col gap-4">
         <div className="px-2">
           <p className="font-semibold">Campus ERP</p>
           <p className="text-sm text-muted-foreground">{user.full_name}</p>
@@ -80,8 +80,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       </aside>
       <main className="flex-1 p-6">
         <AppBreadcrumb />
-         <div className="mt-4">{children}</div> 
-        
+        <div className="mt-4">{children}</div>
       </main>
     </div>
   )

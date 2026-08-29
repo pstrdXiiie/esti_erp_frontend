@@ -23,6 +23,9 @@ const SCREENS = [
       "Manage accounnts",
     icon: ChartNoAxesCombined,
     className: "md:col-span-1 md:row-span-1",
+    badgeBg: "bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white",
+    glowBg: "bg-blue-500/20 group-hover:bg-blue-500/40",
+    hoverBorder: "hover:border-blue-500/50"
   },
   {
     href: "/finance/transactions",
@@ -31,6 +34,9 @@ const SCREENS = [
       "Record and manage financial activities such as payments, collections, invoices, and expenses.",
     icon: BanknoteArrowUp,
     className: "md:col-span-2 md:row-span-1",
+    badgeBg: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-600 group-hover:text-white",
+    glowBg: "bg-emerald-500/20 group-hover:bg-emerald-500/40",
+    hoverBorder: "hover:border-emerald-500/50",
   },
   {
     href: "/finance/financialreport",
@@ -39,6 +45,9 @@ const SCREENS = [
       "View summaries and reports of the institution’s financial activities and performance.",
     icon: ChartPieIcon,
     className: "md:col-span-2",
+    badgeBg: "bg-purple-500/10 text-purple-600 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white",
+    glowBg: "bg-purple-500/20 group-hover:bg-purple-500/40",
+    hoverBorder: "hover:border-purple-500/50",
   },
    {
     href: "/finance/maintenance",
@@ -47,6 +56,9 @@ const SCREENS = [
       "Manage finance settings.",
     icon: ToolCase,
     className: "md:col-span-1",
+    badgeBg: "bg-amber-500/10 text-amber-600 dark:text-amber-400 group-hover:bg-amber-600 group-hover:text-white",
+    glowBg: "bg-amber-500/20 group-hover:bg-amber-500/40",
+    hoverBorder: "hover:border-amber-500/50",
   },
 ]
 
@@ -72,18 +84,24 @@ export default function FinancePage() {
               href={screen.href}
               className={screen.className}
             >
-              <Card className="group relative h-full overflow-hidden border-border/60 bg-background transition-all duration-300 hover:-translate-y-1 hover:border-border hover:shadow-lg">
+              <Card
+                className={`group relative h-full overflow-hidden border-border/60 bg-background transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${screen.hoverBorder}`}
+              >
                 <CardHeader className="relative z-10 flex h-full flex-col justify-between p-6">
                   <div className="flex items-start justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted">
+                    {/* Icon container with default & hover styles */}
+                    <div
+                      className={`flex h-11 w-11 items-center justify-center rounded-xl transition-colors duration-300 ${screen.badgeBg}`}
+                    >
                       <Icon className="h-5 w-5" />
                     </div>
 
-                    <ArrowUpRight className="h-5 w-5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
+                    {/* Arrow icon with hover transition */}
+                    <ArrowUpRight className="h-5 w-5 text-muted-foreground transition-all duration-300 group-hover:translate-x-1 group-hover:-translate-y-1 group-hover:text-foreground" />
                   </div>
 
                   <div>
-                    <CardTitle className="text-xl">
+                    <CardTitle className="text-xl transition-colors duration-300 group-hover:text-primary">
                       {screen.title}
                     </CardTitle>
 
@@ -93,8 +111,10 @@ export default function FinancePage() {
                   </div>
                 </CardHeader>
 
-                {/* Decorative background */}
-                <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-muted/50 blur-2xl transition-all duration-500 group-hover:scale-150" />
+                {/* Decorative background glow with individual color customization */}
+                <div
+                  className={`pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full blur-2xl transition-all duration-500 group-hover:scale-150 ${screen.glowBg}`}
+                />
               </Card>
             </Link>
           )
