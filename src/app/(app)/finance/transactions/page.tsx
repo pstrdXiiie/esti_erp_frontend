@@ -68,7 +68,7 @@ const GROUPS: Array<{ category: string; items: Item[] }> = [
     items: [
       {
         title: "Purchase Requisition",
-        href: "/finance/transactions/purchase_req",
+        href: "/finance/transactions/purchase_requisition",
         icon: FileText,
         badgeBg: "bg-violet-500/10 text-violet-600 dark:text-violet-400 group-hover:bg-violet-600 group-hover:text-white",
         glowBg: "bg-violet-500/15 group-hover:bg-violet-500/35",
@@ -77,7 +77,7 @@ const GROUPS: Array<{ category: string; items: Item[] }> = [
       },
       {
         title: "Purchase Requisition Approval",
-        href: "/finance/transactions/purchase_req_approval",
+        href: "/finance/transactions/purchase_requisition_approval",
         width: "sm:col-span-2",
         height: "min-h-[160px]",
         icon: FileCheck2,
@@ -97,7 +97,7 @@ const GROUPS: Array<{ category: string; items: Item[] }> = [
       },
       {
         title: "Purchase Order Receiving",
-        href: "/finance/transactions/purchase_order_receipt",
+        href: "/finance/transactions/purchase_order_receiving",
         icon: PackageCheck,
         badgeBg: "bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400 group-hover:bg-fuchsia-600 group-hover:text-white",
         glowBg: "bg-fuchsia-500/15 group-hover:bg-fuchsia-500/35",
@@ -106,7 +106,7 @@ const GROUPS: Array<{ category: string; items: Item[] }> = [
       },
       {
         title: "Due Purchase Order Payable",
-        href: "/finance/transactions/due_purchase_order",
+        href: "/finance/transactions/accounts_payable",
         icon: Clock,
         badgeBg: "bg-rose-500/10 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white",
         glowBg: "bg-rose-500/15 group-hover:bg-rose-500/35",

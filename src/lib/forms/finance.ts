@@ -167,7 +167,7 @@ export const pettycash: FormSpec = {
       fieldname: "account",
       label: "Chart of Account",
       fieldtype: "Link",
-      options: "Account",
+      options: "Chart of Account",
       required: true,
       section: "Account Details",
     },
@@ -191,7 +191,7 @@ export const pettycashEntry: FormSpec = {
       fieldname: "account",
       label: "Account",
       fieldtype: "Link",
-      options: "Account",
+      options: "Chart of Account",
       required: true,
       inListView: true,
     },
@@ -359,7 +359,7 @@ export const cashReceipt: FormSpec = {
       fieldname: "account_charged",
       label: "Account Charged",
       fieldtype: "Link",
-      options: "Account",
+      options: "Chart of Account",
       required: true,
       section: "Receipt Details",
     },
@@ -389,7 +389,7 @@ export const journalvoucherentrySpec: FormSpec = {
   title: "Journal Vourcher",
   fields: [
     {fieldname: "account", label: "Account", fieldtype: "Link"},
-    {fieldname: "accounnt_number", label: "Account Number", fieldtype: "Data", readOnly: true },
+    {fieldname: "account_number", label: "Account Number", fieldtype: "Data", readOnly: true },
     {fieldname: "debit", label: "Debit", fieldtype: "Currency"},
     {fieldname: "credit", label: "Credit", fieldtype: "Currency"},
   ],
@@ -418,6 +418,155 @@ export const pettycashvoucheritem: FormSpec ={
     {fieldname: "employee_no", label: "Employee No", fieldtype: "Link"},
   ],
 }
+
+export const purchaseRequisitionApproval: FormSpec = {
+  doctype: "SMS Purchase Requisition Approval",
+  title: "Purchase Request Approval",
+
+  fields: [
+    // Search / Filter
+    {
+      fieldname: "search_all",
+      label: "Search All",
+      fieldtype: "Check",
+      section: "Search & Filter",
+    },
+
+    {
+      fieldname: "date_from",
+      label: "From",
+      fieldtype: "Date",
+      section: "Search & Filter",
+    },
+
+    {
+      fieldname: "date_to",
+      label: "To",
+      fieldtype: "Date",
+      section: "Search & Filter",
+    },
+
+    // Selected Purchase Requisition
+    {
+      fieldname: "purchase_requisition",
+      label: "Purchase Requisition",
+      fieldtype: "Link",
+      options: "SMS Purchase Requisition",
+      required: true,
+      section: "Request Details",
+      inListView: true,
+    },
+
+    {
+      fieldname: "date_needed",
+      label: "Date Needed",
+      fieldtype: "Date",
+      readOnly: true,
+      section: "Request Details",
+    },
+
+    {
+      fieldname: "total_amount",
+      label: "Total",
+      fieldtype: "Currency",
+      readOnly: true,
+      section: "Request Details",
+    },
+
+    {
+      fieldname: "requested_by",
+      label: "Requested By",
+      fieldtype: "Link",
+      options: "Employee",
+      readOnly: true,
+      section: "Request Details",
+    },
+
+    {
+      fieldname: "purpose",
+      label: "Purpose",
+      fieldtype: "Small Text",
+      readOnly: true,
+      section: "Request Details",
+    },
+
+    // Approval
+    {
+      fieldname: "recommending_approval",
+      label: "Recommending Approval",
+      fieldtype: "Link",
+      options: "Employee",
+      section: "Approval",
+    },
+
+    {
+      fieldname: "approved_by",
+      label: "Approved By",
+      fieldtype: "Link",
+      options: "Employee",
+      readOnly: true,
+      section: "Approval",
+    },
+
+    {
+      fieldname: "approval_status",
+      label: "Approval Status",
+      fieldtype: "Select",
+      options: "Pending\nApproved\nDenied",
+      default: "Pending",
+      section: "Approval",
+    },
+
+    {
+      fieldname: "approval_remarks",
+      label: "Approval Remarks",
+      fieldtype: "Small Text",
+      section: "Approval",
+    },
+
+    {
+      fieldname: "approval_date",
+      label: "Approval Date",
+      fieldtype: "Date",
+      readOnly: true,
+      section: "Approval",
+    },
+  ],
+};
+
+export const purchaseRequisitionApprovalSearch: FormSpec = {
+  doctype: "SMS Purchase Requisition Approval Search",
+  title: "Purchase Request Approval Search",
+
+  fields: [
+    {
+      fieldname: "search_all",
+      label: "Search All",
+      fieldtype: "Check",
+      section: "Search & Filter",
+    },
+
+    {
+      fieldname: "date_from",
+      label: "From",
+      fieldtype: "Date",
+      section: "Search & Filter",
+    },
+
+    {
+      fieldname: "date_to",
+      label: "To",
+      fieldtype: "Date",
+      section: "Search & Filter",
+    },
+  ],
+};
+
+
+
+
+
+
 
 
 export const discountSpec: FormSpec = {
@@ -501,7 +650,7 @@ export const assessmentSpec: EntrySpec = {
     { fieldname: "receivable", label: "Receivable", fieldtype: "Currency", readOnly: true, inListView: true },
     { fieldname: "refnum", label: "Ref No", fieldtype: "Data" },
     { fieldname: "cor_reference", label: "COR Reference", fieldtype: "Data" },
-    { fieldname: "receivable_account", label: "Receivable Account", fieldtype: "Link", options: "Account", readOnly: true },
+    { fieldname: "receivable_account", label: "Receivable Account", fieldtype: "Link", options: "Chart of Account", readOnly: true },
     { fieldname: "cost_center", label: "Cost Center", fieldtype: "Link", options: "Cost Center", readOnly: true },
     {
       fieldname: "status",
@@ -532,24 +681,6 @@ export const assessmentSpec: EntrySpec = {
       { fieldname: "amount_paid", label: "Amount Paid", fieldtype: "Currency" },
     ],
   },
-}
-
-export const studentaccs: FormSpec = {
-  doctype: "SMS Student Account",
-  title: "Student Account",
-  fields: [
-    { fieldname: "student_number", label: "Student Number", fieldtype: "Data", section: "Student Information", inListView: true },
-    { fieldname: "school_year", label: "School Year", fieldtype: "Data", section: "Student Information" },
-    { fieldname: "semester", label: "Semester", fieldtype: "Select", options: "1st Semester\n2nd Semester\nSummer", section: "Student Information" },
-    { fieldname: "assessment", label: "Assessment", fieldtype: "Select", options: "Tuition & Fees\nMiscellaneous Fees\nLaboratory Fees", section: "Assessment & Balance" },
-    { fieldname: "current_balance", label: "Current Balance", fieldtype: "Currency", readOnly: true, section: "Assessment & Balance" },
-    { fieldname: "payment", label: "Payment", fieldtype: "Select", options: "Full Payment\nPartial Payment\nInstallment", section: "Payment Details" },
-    { fieldname: "amount", label: "Amount", fieldtype: "Currency", section: "Payment Details" },
-    { fieldname: "or_number", label: "OR Number", fieldtype: "Data", section: "Payment Details" },
-    { fieldname: "payment_date", label: "Date", fieldtype: "Date", section: "Payment Details" },
-    { fieldname: "enable_balance_adjustment", label: "Enable Balance Adjustment", fieldtype: "Check", section: "Balance Adjustment" },
-    { fieldname: "adjustment_balance", label: "Adjustment Balance", fieldtype: "Currency", section: "Balance Adjustment", dependsOn: "enable_balance_adjustment" },
-  ],
 }
 
 export const chequeVoucherEntry: EntrySpec = {

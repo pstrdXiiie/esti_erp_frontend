@@ -38,6 +38,13 @@ export interface FieldSpec {
   inListView?: boolean
   section?: string
   dependsOn?: string
+  default?: string
+  description?: string
+  width?: number
+  /** For Link: whitelisted method to fetch options. */
+  getOptions?: string
+  /** For Link: whitelisted method to fetch options for autocomplete. */
+  getAutocompleteOptions?: string
 
 }
 

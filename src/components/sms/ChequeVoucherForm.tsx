@@ -120,7 +120,7 @@ export function ChequeVoucherForm({ name, basePath }: { name?: string; basePath?
             <input
               {...register("amount")}
               placeholder="0.00"
-              className="w-28 border-b border-[#1B2A4A] bg-transparent px-0.5 py-1 text-right font-mono text-[15px] text-[#1B2A4A] focus:outline-none"
+              className="w-28 border-b border-[#1B2A4A] bg-transparent px-0.5py-1 text-right font-mono text-[15px] text-[#1B2A4A] focus:outline-none"
             />
           </div>
 
@@ -150,7 +150,7 @@ export function ChequeVoucherForm({ name, basePath }: { name?: string; basePath?
             </div>
           </div>
 
-          <div className="flex justify-between rounded-b-md bg-[#1B2A4A] px-7 py-2">
+          <div className="flex justify-between rounded-b-md bg-[#1B2A4A] px-7py-2">
             <span className="font-mono text-xs tracking-[0.18em] text-[#E7EAF2]">⑈{name ?? "NEW"}⑈</span>
             <span className="font-mono text-xs tracking-[0.18em] text-[#E7EAF2]">₱ auto</span>
           </div>

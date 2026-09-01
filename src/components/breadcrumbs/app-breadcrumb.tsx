@@ -23,7 +23,7 @@ import { DynamicCrumbLabel } from "./dynamic-crumb-label"
 
 function toTitleCase(segment: string) {
   return segment
-    .replace(/-/g, " ")
+    .replace(/[-_]/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
