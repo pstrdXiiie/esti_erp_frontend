@@ -1,11 +1,7 @@
-"use client";
+"use client"
+import { FinanceEntryListScreen } from "@/components/finance/FinanceEntryListScreen"
+import { sundryacc } from "@/lib/forms/finance"
 
-import { DetailScreen } from "@/components/sms/DetailScreen";
-import { sundryacc, sundryaccSearch } from "@/lib/forms/finance";
-
-export default function Page() {
-  return (
-    <DetailScreen
-      spec={sundryacc} name={""}    />
-  );
+export default function SundryAccountListPage() {
+  return <FinanceEntryListScreen spec={sundryacc} />
 }

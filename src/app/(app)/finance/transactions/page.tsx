@@ -106,7 +106,7 @@ const GROUPS: Array<{ category: string; items: Item[] }> = [
       },
       {
         title: "Due Purchase Order Payable",
-        href: "/finance/transactions/accounts_payable",
+        href: "/finance/transactions/due_purchase_order_payables",
         icon: Clock,
         badgeBg: "bg-rose-500/10 text-rose-600 dark:text-rose-400 group-hover:bg-rose-600 group-hover:text-white",
         glowBg: "bg-rose-500/15 group-hover:bg-rose-500/35",

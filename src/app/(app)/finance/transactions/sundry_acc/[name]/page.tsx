@@ -2,11 +2,11 @@
 
 import { use } from "react"
 import { FinanceEntryScreen } from "@/components/finance/FinanceEntryScreen"
-import { chartOfAccountSpec } from "@/lib/forms/finance"
+import { sundryacc } from "@/lib/forms/finance"
 
-const BASE_PATH = "/finance/chartsofaccounts"
+const BASE_PATH = "/finance/transactions/sundry_acc"
 
-export default function ChartOfAccountEntryPage({
+export default function SundryAccountEntryPage({
   params,
 }: {
   params: Promise<{ name: string }>
@@ -15,5 +15,5 @@ export default function ChartOfAccountEntryPage({
   const isNew = name === "new"
   const docName = isNew ? undefined : decodeURIComponent(name)
 
-  return <FinanceEntryScreen spec={chartOfAccountSpec} name={docName} basePath={BASE_PATH} />
+  return <FinanceEntryScreen spec={sundryacc} name={docName} basePath={BASE_PATH} />
 }

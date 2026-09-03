@@ -37,21 +37,21 @@ export const breadcrumbResolvers: Record<string, BreadcrumbResolver> = {
   // this build (used by GLEntryGrid's account picker).
   chartsofaccounts: async (id) => {
     const doc = await frappe.getDoc<{ account_name?: string }>(
-      "Chart of Account",
+      "Account",
       id
     )
     return doc.account_name ?? null
   },
 
-  // Confirmed against src/lib/forms/finance.ts's studentacc FormSpec —
-  // doctype is right, but there's no "account_holder_name" field; the
-  // display field is "student_number" (a plain Data field, not a Link
-  // to Student).
+  // student_acc now serves SMS Student Assessment (see forms/finance.ts's
+  // assessmentSpec) — "SMS Student Account" never existed on the real
+  // backend; this route was moved here from the old /finance/chartsofaccounts
+  // route, which itself was a misnamed home for the same screen.
   student_acc: async (id) => {
-    const doc = await frappe.getDoc<{ student_number?: string }>(
-      "SMS Student Account",
+    const doc = await frappe.getDoc<{ student_name?: string }>(
+      "SMS Student Assessment",
       id
     )
-    return doc.student_number ?? null
+    return doc.student_name ?? null
   },
 }

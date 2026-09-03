@@ -1,8 +1,7 @@
 "use client"
+import { FinanceEntryListScreen } from "@/components/finance/FinanceEntryListScreen"
+import { chartOfAccountSpec } from "@/lib/forms/finance"
 
-import { EntryListScreen } from "@/components/sms/EntryListScreen"
-import { assessmentSpec } from "@/lib/forms/finance"
-
-export default function AssessmentsListPage() {
-  return <EntryListScreen spec={assessmentSpec} basePath="/finance/assessments" />
+export default function ChartOfAccountsListPage() {
+  return <FinanceEntryListScreen spec={chartOfAccountSpec} />
 }

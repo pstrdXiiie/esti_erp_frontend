@@ -5,12 +5,13 @@ import type { ChildTableSpec } from "@/lib/forms/types"
 
 const accountsChildSpec: ChildTableSpec = {
   doctype: "SMS Petty Cash Account Entry",
-  fields: [
+  columns: [
     { fieldname: "account", label: "Account", fieldtype: "Link", options: "Account", required: true },
     { fieldname: "account_name", label: "Account Name", fieldtype: "Data", readOnly: true },
     { fieldname: "debit", label: "Debit", fieldtype: "Currency" },
-    { fieldname: "credit", label: "Credit", fieldtype: "Currency" },
+    { fieldname: "creadit", label: "Credit", fieldtype: "Currency" },
   ],
+  fieldname: ""
 }
 
 export default function PettyCashEntryPage() {

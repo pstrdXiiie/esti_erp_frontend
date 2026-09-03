@@ -1,7 +1,13 @@
-import { DetailScreen } from "@/components/sms/DetailScreen"
-import { studentacc } from "@/lib/forms/finance"
+"use client"
+import { FinanceEntryListScreen } from "@/components/finance/FinanceEntryListScreen"
+import { AssessmentActions } from "@/components/finance/AssessmentActions"
+import { assessmentSpec } from "@/lib/forms/finance"
 
-export default async function Page({ params }: { params: Promise<{ name: string }> }) {
-  const { name } = await params
-  return <DetailScreen spec={studentacc} name={name} />
+export default function StudentAccountsListPage() {
+  return (
+    <FinanceEntryListScreen
+      spec={assessmentSpec}
+      renderExtra={(name) => <AssessmentActions name={name} />}
+    />
+  )
 }

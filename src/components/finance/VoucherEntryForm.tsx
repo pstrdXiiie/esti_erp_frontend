@@ -15,6 +15,9 @@ export interface VoucherEntryFormProps {
   childSpec: ChildTableSpec
   saveLabel: string
   onSave?: (payload: Record<string, unknown>) => void
+  /** Real backend fieldname for the credit total, when it isn't "total_credit"
+   *  (e.g. SMS Journal Voucher misspells it as "total_currcy"). */
+  totalCreditFieldname?: string
 }
 
 export function VoucherEntryForm({
@@ -25,14 +28,15 @@ export function VoucherEntryForm({
   childSpec,
   saveLabel,
   onSave,
+  totalCreditFieldname = "total_credit",
 }: VoucherEntryFormProps) {
   const [namingSeries, setNamingSeries] = useState(namingSeriesOptions[0])
   const [postingDate] = useState(() => new Date().toISOString().slice(0, 10))
   const [remark, setRemark] = useState("")
   const [accounts, setAccounts] = useState<Array<Record<string, unknown>>>([])
 
-  const totals = useMemo(() => {
-    return accounts.reduce(
+  const totals = useMemo<{ debit: number; credit: number }>(() => {
+    return accounts.reduce<{ debit: number; credit: number }>(
       (acc, r) => {
         acc.debit += Number(r.debit ?? 0)
         acc.credit += Number(r.credit ?? 0)
@@ -44,22 +48,41 @@ export function VoucherEntryForm({
 
   const isBalanced = accounts.length > 0 && totals.debit === totals.credit
 
-  function handleSave() {
-    const payload = {
-      naming_series: namingSeries,
-      posting_date: postingDate,
-      user_remark: remark,
-      accounts,
-      total_debit: totals.debit,
-      total_credit: totals.credit,
+function handleSave() {
+  // GLEntryGrid always builds rows with literal "debit"/"credit" keys.
+  // Remap to this child doctype's real fieldnames before saving — e.g.
+  // SMS Petty Cash Account Entry stores credit as "creadit".
+  const debitCol = childSpec.columns.find((c) => c.label.toLowerCase() === "debit")
+  const creditCol = childSpec.columns.find((c) => c.label.toLowerCase() === "credit")
+
+  const backendAccounts = accounts.map((row) => {
+    const out: Record<string, unknown> = { ...row }
+    if (debitCol && debitCol.fieldname !== "debit") {
+      out[debitCol.fieldname] = out.debit
+      delete out.debit
     }
-    if (onSave) {
-      onSave(payload)
-    } else {
-      // TODO: wire up to frappe.insert / frappe.save
-      console.log(payload)
+    if (creditCol && creditCol.fieldname !== "credit") {
+      out[creditCol.fieldname] = out.credit
+      delete out.credit
     }
+    return out
+  })
+
+  const payload = {
+    naming_series: namingSeries,
+    posting_date: postingDate,
+    user_remark: remark,
+    accounts: backendAccounts,
+    total_debit: totals.debit,
+    [totalCreditFieldname]: totals.credit,
   }
+  if (onSave) {
+    onSave(payload)
+  } else {
+    // TODO: wire up to frappe.insert / frappe.save
+    console.log(payload)
+  }
+}
 
   return (
     <div className="grid max-w-3xl gap-6">

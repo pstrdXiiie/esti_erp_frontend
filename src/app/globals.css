@@ -128,3 +128,19 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  .print-hide {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  main {
+    padding: 0 !important;
+  }
+}
+
+.print-only {
+  display: none;
+}

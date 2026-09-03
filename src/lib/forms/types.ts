@@ -25,6 +25,7 @@ export type FieldType =
   | "Column Break"
   | "Section Break"
   | "Table"
+  | "Attach"
 
 
 export interface FieldSpec {
@@ -45,6 +46,8 @@ export interface FieldSpec {
   getOptions?: string
   /** For Link: whitelisted method to fetch options for autocomplete. */
   getAutocompleteOptions?: string
+  Data?: string
+  Currency?: number
 
 }
 
@@ -80,5 +83,5 @@ export interface ReportSpec {
   method?: string
   title: string
   filters: FieldSpec[]
-  columns: Array<{ fieldname: string; label: string; width?: number }>
+  columns: Array<{ fieldname: string; label: string; width?: number; fieldtype?: FieldType }>
 }

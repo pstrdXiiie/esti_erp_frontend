@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { useForm } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { usePathname, useRouter } from "next/navigation"
@@ -23,7 +23,21 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
-export function DetailScreen({ spec, name }: { spec: FormSpec; name: string }) {
+export function DetailScreen({
+  spec,
+  name,
+  extraActions,
+  basePath,
+}: {
+  spec: FormSpec
+  name: string
+  extraActions?: ReactNode
+  /** Route this record's list/parent lives under, e.g. "/finance/transactions/student_acc".
+      Used to build the post-create/post-delete redirect instead of guessing from the
+      current URL, which breaks on static (non-[name]) routes. Falls back to the old
+      pathname-slicing behavior if omitted, for screens not yet updated. */
+  basePath?: string
+}) {
   const queryClient = useQueryClient()
   const router = useRouter()
   const pathname = usePathname()
@@ -70,7 +84,7 @@ export function DetailScreen({ spec, name }: { spec: FormSpec; name: string }) {
       queryClient.invalidateQueries({ queryKey: [spec.doctype] })
       setIsEditing(false)
       setIsNew(false)
-      const parentPath = pathname.split("/").slice(0, -1).join("/")
+      const parentPath = basePath ?? pathname.split("/").slice(0, -1).join("/")
       const newName = String(created.name)
       router.push(`${parentPath}/${encodeURIComponent(newName)}`)
     },
@@ -83,7 +97,7 @@ export function DetailScreen({ spec, name }: { spec: FormSpec; name: string }) {
       toast.success(`${spec.title} deleted`)
       queryClient.invalidateQueries({ queryKey: [spec.doctype] })
       setConfirmDelete(false)
-      const parentPath = pathname.split("/").slice(0, -1).join("/")
+      const parentPath = basePath ?? pathname.split("/").slice(0, -1).join("/")
       router.push(parentPath)
     },
     onError: (error) => {
@@ -167,6 +181,7 @@ export function DetailScreen({ spec, name }: { spec: FormSpec; name: string }) {
             </>
           ) : (
             <>
+              {extraActions}
               <Button type="button" variant="outline" onClick={handleNew}>
                 New
               </Button>
